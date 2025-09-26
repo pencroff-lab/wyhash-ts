@@ -5,17 +5,19 @@ import { wyhash_bun } from './wyhash_bun.ts';
 
 const isBun = typeof globalThis.Bun !== 'undefined';
 
+console.log("---\n\tUsed SEED = 1n (64-bit BigInt)\n---");
+
 barplot(() => {
 	summary(() => {
 		// @ts-ignore
-		bench('wyhash-ts(1, $size)', function* (state) {
+		bench('wyhash($size) v4.2', function* (state) {
 			const size = state.get('size');
 			const data = 'a'.repeat(size);
 			yield () => wyhash(1n, data);
 		})
 			.args('size', [4, 8, 320, 512, 1024, 8192])
 			.gc('inner');
-		bench('wyhash_bun(1, $size)', function* (state: { get: (arg0: string) => any; }) {
+		bench('wyhash($size) Bun', function* (state: { get: (arg0: string) => any; }) {
 			const size = state.get('size');
 			const data = 'a'.repeat(size);
 			yield () => wyhash_bun(1n, data);
@@ -23,7 +25,7 @@ barplot(() => {
 			.args('size', [4, 8, 320, 512, 1024, 8192])
 			.gc('inner');
 		isBun &&
-		bench('Bun.hash($size, 1)', function* (state: { get: (arg0: string) => any; }) {
+		bench('Bun.hash($size)', function* (state: { get: (arg0: string) => any; }) {
 			const size = state.get('size');
 			const data = 'a'.repeat(size);
 			yield () => Bun.hash(data, 1n);
@@ -61,12 +63,6 @@ _.chain(out)
 		const mibP75 = toThroughput(bytesPerIter, p75Ns, false);
 		const timeRow = _.map([p25Ns / 1e3, p50Ns/1e3, p75Ns/1e3], asRowEl).join('');
 		const thrpRow = _.map([mibP25, mibP50, mibP75], asRowEl).join('');
-		// console.log(
-		// 	`${name}:\n` +
-		// 	`Quantile\tP_25\t\tP_50\t\tP_75\n` +
-		// 	`time, µs\t${(p25Ns / 1e3).toFixed(3)}\t${(p50Ns / 1e3).toFixed(3)}\t${(p75Ns / 1e3).toFixed(3)}\n` +
-		// 	`thrp, MiB/s\t${mibP25.toFixed(3)}\t${mibP50.toFixed(3)}\t${mibP75.toFixed(3)}`,
-		// );
 		console.log(
 			`${name}:\n` +
 			`Quantile\tP_25\t\tP_50\t\tP_75\n` +

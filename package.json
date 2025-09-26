@@ -19,7 +19,10 @@
     "build": "npm run build:esm && npm run build:cjs",
     "prebuild": "rm -rf dist",
     "build:esm": "tsc --project tsconfig.esm.json",
-    "build:cjs": "tsc --project tsconfig.cjs.json"
+    "build:cjs": "tsc --project tsconfig.cjs.json",
+    "prepublishOnly": "bun run build",
+    "publish": "bun publish",
+    "postpublish": "git tag v$npm_package_version && git push origin --tags && git push origin main"
   },
   "devDependencies": {
     "@types/bun": "1.2.22",
