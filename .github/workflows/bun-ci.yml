@@ -24,11 +24,41 @@ jobs:
         run: bun test
 
       - name: Publish package with build in prepublish
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: bun run publish_pkg
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Ensure release tag
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/github-script@v7
+        with:
+#          github-token: ${{ secrets.REPO_TAG_TOKEN }}
+          script: |
+            const fs = require('node:fs');
+            const { version } = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+            const tag = `v${version}`;
+            core.info(`Ensuring tag ${tag} points at ${context.sha}`);
+            try {
+              await github.rest.git.getRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `tags/${tag}`,
+              });
+              core.info(`Tag ${tag} already exists; skipping creation.`);
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              await github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `refs/tags/${tag}`,
+                sha: context.sha,
+              });
+              core.info(`Created tag ${tag} for commit ${context.sha}.`);
+            }
+
       - name: Verify package version
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: bun info @pencroff-lab/wyhash-ts
         env:
           NPM_TOKEN: "---"
