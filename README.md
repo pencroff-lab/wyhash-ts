@@ -5,6 +5,12 @@ It is a fast non-cryptographic hash function suitable for general hash-based loo
 
 Original C implementation can be found [here](https://github.com/wangyi-fudan/wyhash)
 Bun uses wyhash implementation from zig [here](https://github.com/ziglang/zig/blob/master/lib/std/hash/wyhash.zig)
+
+## Refs
+
+- [wyhash-ts on GitHub](https://github.com/pencroff-lab/wyhash-ts)
+- [wyhash-ts npm](https://www.npmjs.com/package/@pencroff-lab/wyhash-ts)
+
 ## Usage
 
 Install:
@@ -25,6 +31,7 @@ console.log(hash); // prints: 0x9e5c6e8f4a5f3f7n
 ```
 ## Benchmarks
 
+```bash
 Ξ bun run benchmark
 ...
 ---
@@ -197,7 +204,7 @@ wyhash(8192) Bun:
 Quantile        P_25            P_50            P_75
 time, µs        535.708         683.125         811.292         
 thrp, MiB/s     14.583          11.436          9.629
-
+```
 
 ## Bun used for this project
 

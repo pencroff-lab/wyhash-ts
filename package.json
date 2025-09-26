@@ -1,6 +1,11 @@
 {
   "name": "@pencroff-lab/wyhash-ts",
-  "version": "0.1.4",
+  "version": "0.1.5",
+  "description": "A TypeScript implementation of the wyhash hash function.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pencroff-lab/wyhash-ts"
+  },
   "type": "module",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -12,7 +17,9 @@
       "require": "./dist/cjs/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "benchmark": "bun run build/wyhash.bench.js && node build/wyhash.bench.js",
     "prebenchmark": "bun build --target=node --outdir=build src/wyhash.bench.ts",
