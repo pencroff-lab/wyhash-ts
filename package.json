@@ -1,11 +1,20 @@
 {
   "name": "@pencroff-lab/wyhash-ts",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "A TypeScript implementation of the wyhash hash function.",
   "repository": {
     "type": "git",
     "url": "https://github.com/pencroff-lab/wyhash-ts"
   },
+  "license": "Apache-2.0",
+  "author": "Pencroff",
+  "keywords": [
+    "wyhash",
+    "hash",
+    "hash-function",
+    "typescript",
+    "ts"
+  ],
   "type": "module",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
