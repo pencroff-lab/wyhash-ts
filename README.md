@@ -1,11 +1,28 @@
-# wyhash
+# wyhash-ts
 
 This is latest v4.2 version of wyhash implemented in TypeScript.
 It is a fast non-cryptographic hash function suitable for general hash-based lookup.
 
 Original C implementation can be found [here](https://github.com/wangyi-fudan/wyhash)
 Bun uses wyhash implementation from zig [here](https://github.com/ziglang/zig/blob/master/lib/std/hash/wyhash.zig)
+## Usage
 
+Install:
+
+```bash
+npm i @pencroff-lab/wyhash-ts
+```
+or
+```bash
+bun add @pencroff-lab/wyhash-ts
+```
+Then import and use:
+
+```typescript
+import { wyhash } from "wyhash-ts";
+const hash = wyhash(1n, "hello world"); // seed is bigint
+console.log(hash); // prints: 0x9e5c6e8f4a5f3f7n
+```
 ## Benchmarks
 
 Ξ bun run benchmark

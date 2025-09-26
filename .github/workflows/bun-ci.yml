@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  test:
+  test_publish:
     runs-on: ubuntu-latest
     container:
       image: oven/bun:1.2-slim
