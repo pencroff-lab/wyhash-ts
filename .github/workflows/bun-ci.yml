@@ -22,13 +22,13 @@ jobs:
 
       - name: Run tests
         run: bun test
-      - name: Expose secret
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Publish package with build in prepublish
         run: bun run publish
-      - name: Clean secret
         env:
-          NPM_TOKEN: "---"
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Verify package version
         run: bun info @pencroff-lab/wyhash-ts
+        env:
+          NPM_TOKEN: "---"
