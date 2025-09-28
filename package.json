@@ -1,6 +1,6 @@
 {
   "name": "@pencroff-lab/wyhash-ts",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "A TypeScript implementation of the wyhash hash function.",
   "repository": {
     "type": "git",

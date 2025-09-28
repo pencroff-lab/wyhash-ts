@@ -17,8 +17,8 @@ describe('wyhash_bun', () => {
 		for (const vector of zigTestVectors) {
 			it(`should match Zig reference for seed ${vector.seed} and input "${vector.input}"`, () => {
 				const result = wyhash_bun(BigInt(vector.seed), vector.input);
-				const expected = vector.expected.toString(16).padStart(16, '0');
-				expect(result).toBe(expected);
+				// const expected = vector.expected.toString(16).padStart(16, '0');
+				expect(result).toBe(vector.expected);
 			});
 		}
 	});
@@ -62,7 +62,8 @@ describe('wyhash_bun', () => {
 	describe('Additional test cases', () => {
 		for (const tc of additionalTestCases) {
 			it(`should return '${tc.expected}' for '${tc.key}' with seed '${tc.seed}'`, () => {
-				expect(wyhash_bun(BigInt(tc.seed), tc.key)).toBe(tc.expected);
+				const bi = BigInt('0x'+tc.expected);
+				expect(wyhash_bun(BigInt(tc.seed), tc.key)).toBe(bi);
 			});
 		}
 	});
@@ -95,7 +96,8 @@ describe('wyhash_bun', () => {
 						// Running in Node.js or other environment - skip Bun.hash comparison
 						console.log(`Our result: ${ourResult}, Bun not available`);
 					}
-				} catch (error) {
+				} catch (e) {
+					const error = e as Error;
 					// Gracefully handle environments where Bun is not available
 					console.log(`Our result: ${ourResult}, Bun check failed: ${error.message}`);
 				}
@@ -107,27 +109,26 @@ describe('wyhash_bun', () => {
 	describe('Edge cases', () => {
 		it('should handle empty string', () => {
 			const result = wyhash_bun(0n, '');
-			expect(typeof result).toBe('string');
-			expect(result).toHaveLength(16);
+			expect(typeof result).toBe('bigint');
 		});
 
 		it('should handle large seeds', () => {
 			const result = wyhash_bun(0xFFFFFFFFFFFFFFFFn, 'test');
-			expect(typeof result).toBe('string');
-			expect(result).toHaveLength(16);
+			expect(typeof result).toBe('bigint');
 		});
 
 		it('should handle unicode strings', () => {
 			const result = wyhash_bun(42n, '🦀 Rust is awesome! 🚀');
-			expect(typeof result).toBe('string');
-			expect(result).toHaveLength(16);
+			expect(typeof result).toBe('bigint');
 		});
 
 		it('should produce different results for different seeds', () => {
 			const key = 'test';
 			const result1 = wyhash_bun(1n, key);
 			const result2 = wyhash_bun(2n, key);
+			const result3 = wyhash_bun(1n, key);
 			expect(result1).not.toBe(result2);
+			expect(result1).toBe(result3);
 		});
 
 		it('should produce different results for different keys', () => {

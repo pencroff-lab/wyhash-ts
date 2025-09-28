@@ -8,11 +8,15 @@ const wyp3 = 0x4d5a2da51de1aa47n;
  * Converts the key (a string) to UTF-8 bytes and finally returns the hash as a hexadecimal string.
  * @param seed 64-bit seed
  * @param key input string
- * @returns 64-bit hash as a hexadecimal string
+ * @returns 64-bit hash as BigInt
  */
-export function wyhash(seed: bigint, key: string): string {
-	const hashValue = sum64(key, seed);
-	return hashValue.toString(16);
+export function wyhash(seed: bigint, key: string): bigint {
+	const seedU64 = BigInt.asUintN(64, seed);
+	const encoder = new TextEncoder();
+	const input = encoder.encode(key);
+
+	const result = sum64(seed, input);
+	return result;
 }
 
 /**
@@ -23,11 +27,9 @@ export function wyhash(seed: bigint, key: string): string {
  * - For keys with length from 4 to 16, it selects the correct 4‑byte windows.
  * - For longer keys it processes 48‑byte blocks (if available), then 16‑byte blocks.
  */
-function sum64(key: string, sd: bigint): bigint {
+function sum64(sd: bigint, input: Uint8Array): bigint {
 	// Convert the string into a UTF‑8 encoded Uint8Array.
-	const encoder = new TextEncoder();
-	const keyBytes = encoder.encode(key);
-	const n = keyBytes.length;
+	const n = input.length;
 	const u = BigInt(n);
 
 	// Initial seed mixing: seed ^= wymix(seed^wyp0, wyp1)
@@ -45,103 +47,103 @@ function sum64(key: string, sd: bigint): bigint {
 	}
 	if (n < 4) {
 		// For inputs 1 to 3 bytes.
-		a = wyr3(keyBytes, n) ^ wyp1;
+		a = wyr3(input, n) ^ wyp1;
 		b = seed;
 		({ a, b } = wymum(a, b));
 		return wymix(a ^ wyp0 ^ u, b ^ wyp1);
 	}
 	if (n <= 16) {
 		// For inputs 4 to 16 bytes.
-		const v0 = wyr4(keyBytes.subarray(0, 4));
+		const v0 = wyr4(input.subarray(0, 4));
 		switch (n) {
 			case 4:
 				a = ((v0 << 32n) | v0) ^ wyp1;
 				b = ((v0 << 32n) | v0) ^ seed;
 				break;
 			case 5: {
-				const v1 = wyr4(keyBytes.subarray(1, 5));
+				const v1 = wyr4(input.subarray(1, 5));
 				a = ((v0 << 32n) | v0) ^ wyp1;
 				b = ((v1 << 32n) | v1) ^ seed;
 				break;
 			}
 			case 6: {
-				const v2 = wyr4(keyBytes.subarray(2, 6));
+				const v2 = wyr4(input.subarray(2, 6));
 				a = ((v0 << 32n) | v0) ^ wyp1;
 				b = ((v2 << 32n) | v2) ^ seed;
 				break;
 			}
 			case 7: {
-				const v3 = wyr4(keyBytes.subarray(3, 7));
+				const v3 = wyr4(input.subarray(3, 7));
 				a = ((v0 << 32n) | v0) ^ wyp1;
 				b = ((v3 << 32n) | v3) ^ seed;
 				break;
 			}
 			case 8: {
-				const v4 = wyr4(keyBytes.subarray(4, 8));
+				const v4 = wyr4(input.subarray(4, 8));
 				a = ((v0 << 32n) | v4) ^ wyp1;
 				b = ((v4 << 32n) | v0) ^ seed;
 				break;
 			}
 			case 9: {
-				const partA = wyr4(keyBytes.subarray(4, 8));
-				const partB = wyr4(keyBytes.subarray(5, 9));
-				const partC = wyr4(keyBytes.subarray(1, 5));
+				const partA = wyr4(input.subarray(4, 8));
+				const partB = wyr4(input.subarray(5, 9));
+				const partC = wyr4(input.subarray(1, 5));
 				a = ((v0 << 32n) | partA) ^ wyp1;
 				b = ((partB << 32n) | partC) ^ seed;
 				break;
 			}
 			case 10: {
-				const partA = wyr4(keyBytes.subarray(4, 8));
-				const partB = wyr4(keyBytes.subarray(6, 10));
-				const partC = wyr4(keyBytes.subarray(2, 6));
+				const partA = wyr4(input.subarray(4, 8));
+				const partB = wyr4(input.subarray(6, 10));
+				const partC = wyr4(input.subarray(2, 6));
 				a = ((v0 << 32n) | partA) ^ wyp1;
 				b = ((partB << 32n) | partC) ^ seed;
 				break;
 			}
 			case 11: {
-				const partA = wyr4(keyBytes.subarray(4, 8));
-				const partB = wyr4(keyBytes.subarray(7, 11));
-				const partC = wyr4(keyBytes.subarray(3, 7));
+				const partA = wyr4(input.subarray(4, 8));
+				const partB = wyr4(input.subarray(7, 11));
+				const partC = wyr4(input.subarray(3, 7));
 				a = ((v0 << 32n) | partA) ^ wyp1;
 				b = ((partB << 32n) | partC) ^ seed;
 				break;
 			}
 			case 12: {
-				const partA = wyr4(keyBytes.subarray(4, 8));
-				const partB = wyr4(keyBytes.subarray(8, 12));
-				const partC = wyr4(keyBytes.subarray(4, 8));
+				const partA = wyr4(input.subarray(4, 8));
+				const partB = wyr4(input.subarray(8, 12));
+				const partC = wyr4(input.subarray(4, 8));
 				a = ((v0 << 32n) | partA) ^ wyp1;
 				b = ((partB << 32n) | partC) ^ seed;
 				break;
 			}
 			case 13: {
-				const partA = wyr4(keyBytes.subarray(4, 8));
-				const partB = wyr4(keyBytes.subarray(9, 13));
-				const partC = wyr4(keyBytes.subarray(5, 9));
+				const partA = wyr4(input.subarray(4, 8));
+				const partB = wyr4(input.subarray(9, 13));
+				const partC = wyr4(input.subarray(5, 9));
 				a = ((v0 << 32n) | partA) ^ wyp1;
 				b = ((partB << 32n) | partC) ^ seed;
 				break;
 			}
 			case 14: {
-				const partA = wyr4(keyBytes.subarray(4, 8));
-				const partB = wyr4(keyBytes.subarray(10, 14));
-				const partC = wyr4(keyBytes.subarray(6, 10));
+				const partA = wyr4(input.subarray(4, 8));
+				const partB = wyr4(input.subarray(10, 14));
+				const partC = wyr4(input.subarray(6, 10));
 				a = ((v0 << 32n) | partA) ^ wyp1;
 				b = ((partB << 32n) | partC) ^ seed;
 				break;
 			}
 			case 15: {
-				const partA = wyr4(keyBytes.subarray(4, 8));
-				const partB = wyr4(keyBytes.subarray(11, 15));
-				const partC = wyr4(keyBytes.subarray(7, 11));
+				const partA = wyr4(input.subarray(4, 8));
+				const partB = wyr4(input.subarray(11, 15));
+				const partC = wyr4(input.subarray(7, 11));
 				a = ((v0 << 32n) | partA) ^ wyp1;
 				b = ((partB << 32n) | partC) ^ seed;
 				break;
 			}
 			case 16: {
-				const partA = wyr4(keyBytes.subarray(8, 12));
-				const partB = wyr4(keyBytes.subarray(12, 16));
-				const partC = wyr4(keyBytes.subarray(4, 8));
+				const partA = wyr4(input.subarray(8, 12));
+				const partB = wyr4(input.subarray(12, 16));
+				const partC = wyr4(input.subarray(4, 8));
 				a = ((v0 << 32n) | partA) ^ wyp1;
 				b = ((partB << 32n) | partC) ^ seed;
 				break;
@@ -156,7 +158,7 @@ function sum64(key: string, sd: bigint): bigint {
 	// For inputs longer than 16 bytes.
 	let i = n;
 	let pos = 0;
-	let p = keyBytes;
+	let p = input;
 	if (i >= 48) {
 		let see1 = seed;
 		let see2 = seed;
@@ -184,8 +186,8 @@ function sum64(key: string, sd: bigint): bigint {
 		p = p.subarray(16);
 		i -= 16;
 	}
-	a = wyr8(keyBytes.subarray(n - 16, n - 8)) ^ wyp1;
-	b = wyr8(keyBytes.subarray(n - 8, n)) ^ seed;
+	a = wyr8(input.subarray(n - 16, n - 8)) ^ wyp1;
+	b = wyr8(input.subarray(n - 8, n)) ^ seed;
 	({ a, b } = wymum(a, b));
 	return wymix(a ^ wyp0 ^ u, b ^ wyp1);
 }

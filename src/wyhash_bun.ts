@@ -11,20 +11,18 @@ const secret: [bigint, bigint, bigint, bigint] = [
  * It's much slower than native implementations.
  * @param seed 64-bit seed
  * @param key input string
- * @returns 64-bit hash as a hexadecimal string
+ * @returns 64-bit hash as BigInt
  */
-export function wyhash_bun(seed: bigint, key: string): string {
+export function wyhash_bun(seed: bigint, key: string): bigint {
 	const seedU64 = BigInt.asUintN(64, seed);
 	const encoder = new TextEncoder();
 	const input = encoder.encode(key);
 
-	const result = wyhash(seedU64, input);
-	return result.toString(16).padStart(16, '0');
+	const result = sum64(seedU64, input);
+	return result
 }
 
-function wyhash(seed: bigint, input: Uint8Array): bigint {
-
-
+function sum64(seed: bigint, input: Uint8Array): bigint {
 	let a: bigint, b: bigint;
 	let state0 = seed ^ mix(seed ^ secret[0], secret[1]);
 	const len = input.length;

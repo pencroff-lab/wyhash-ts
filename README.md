@@ -4,6 +4,7 @@ This is latest v4.2 version of wyhash implemented in TypeScript.
 It is a fast non-cryptographic hash function suitable for general hash-based lookup.
 
 Original C implementation can be found [here](https://github.com/wangyi-fudan/wyhash)
+
 Bun uses wyhash implementation from zig [here](https://github.com/ziglang/zig/blob/master/lib/std/hash/wyhash.zig)
 
 ## Refs

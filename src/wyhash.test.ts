@@ -39,7 +39,8 @@ describe('wyhash', () => {
 
 	for (const tc of testCases) {
 		it(`should return '${tc.expected}' for '${tc.key}' with seed '${tc.seed}'`, () => {
-			expect(wyhash(BigInt(tc.seed), tc.key)).toBe(tc.expected);
+			const bi = BigInt('0x'+tc.expected);
+			expect(wyhash(BigInt(tc.seed), tc.key)).toBe(BigInt(bi));
 		});
 	}
 });
