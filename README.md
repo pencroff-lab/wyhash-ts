@@ -23,13 +23,28 @@ or
 ```bash
 bun add @pencroff-lab/wyhash-ts
 ```
-Then import and use:
+This module provides two implementations of the wyhash algorithm:
+
+- `wyhash`: A pure TypeScript implementation of the wyhash v4.2 algorithm.
+- `wyhash_bun`: An implementation optimized for the Bun runtime.
+
+Then import and use original `wyhash` function:
 
 ```typescript
-import { wyhash } from "wyhash-ts";
-const hash = wyhash(1n, "hello world"); // seed is bigint
-console.log(hash); // prints: 0x9e5c6e8f4a5f3f7n
+import { wyhash } from "@pencroff-lab/wyhash-ts";
+const hash = wyhash(2n, "abc"); // seed is bigint
+console.log(hash); // prints: 0xa97f2f7b1d9b3314n
 ```
+
+For `Bun.hash` runtime API, you can use `wyhash_bun` in Node.js or browser environments:
+
+```typescript
+import { wyhash_bun } from "@pencroff-lab/wyhash-ts";
+const hash = wyhash_bun(2n, "abc"); // seed is BigInt
+console.log(hash); // prints: 0x32dd92e4b2915153n
+```
+> Note: `wyhash_bun` is implemented for compatibility with Bun's API, which uses a different wyhash version.
+
 ## Benchmarks
 
 ```bash
